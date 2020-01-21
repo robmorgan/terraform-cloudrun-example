@@ -27,7 +27,7 @@ resource "google_cloud_run_service" "service" {
   template {
     metadata {
       annotations = {
-        "client.knative.dev/user-image" = var.image_name
+        "client.knative.dev/user-image" = local.image_name
       }
     }
 

@@ -1,0 +1,5 @@
+project = "project-foo-1234"
+
+location = "us-central1"
+
+gcr_region = "us"

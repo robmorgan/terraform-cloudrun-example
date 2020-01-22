@@ -1,8 +1,5 @@
 # Terraform Serverless CI/CD Pipeline Example
 
-This repo contains modules for running relational databases such as MySQL and PostgreSQL on
-[Google Cloud Platform (GCP)](https://cloud.google.com/) using [Cloud SQL](https://cloud.google.com/sql/).
-
 This repo contains an example of deploying a serverless CI/CD pipeline on GCP using Terraform. You can read
 more about it on the associated blog post - "[Deploy a Serverless CI/CD Pipeline on GCP using Cloud Run, Cloud Build & Terraform](https://robmorgan.id.au/posts/deploy-a-serverless-cicd-pipeline-on-gcp-using-cloud-run-and-terraform/)".
 

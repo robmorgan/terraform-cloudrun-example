@@ -12,8 +12,3 @@ output "repository_http_url" {
   description = "HTTP URL of the repository in Cloud Source Repositories."
   value       = google_sourcerepo_repository.repo.url
 }
-
-output "registry_url" {
-  description = "The URL at which the GCR registry can be accessed."
-  value       = module.gcr_registry.registry_url
-}

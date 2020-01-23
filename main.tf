@@ -28,12 +28,37 @@ resource "google_cloud_run_service" "service" {
     metadata {
       annotations = {
         "client.knative.dev/user-image" = local.image_name
+
+        # uncomment the following line to connect to the cloud sql database instance
+        #"run.googleapis.com/cloudsql-instances" = local.instance_connection_name
       }
     }
 
     spec {
       containers {
         image = local.image_name
+
+        # uncomment the following env vars to provide the cloud run service
+        # with the cloud sql database details.
+        #env {
+        #  name  = "INSTANCE_CONNECTION_NAME"
+        #  value = local.instance_connection_name
+        #}
+        #
+        #env {
+        #  name  = "MYSQL_DATABASE"
+        #  value = var.db_name
+        #}
+        #
+        #env {
+        #  name  = "MYSQL_USERNAME"
+        #  value = var.db_username
+        #}
+        #
+        #env {
+        #  name  = "MYSQL_PASSWORD"
+        #  value = var.db_password
+        #}
       }
     }
   }
@@ -84,14 +109,41 @@ resource "google_cloudbuild_trigger" "cloud_build_trigger" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# CONFIGURE THE GCR REGISTRY TO STORE THE CLOUD BUILD ARTIFACTS
+# OPTIONALLY DEPLOY A DATABASE
 # ---------------------------------------------------------------------------------------------------------------------
 
-module "gcr_registry" {
-  source = "github.com/gruntwork-io/terraform-google-ci.git//modules/gcr-registry?ref=upgrade-google-providers"
+resource "google_sql_database_instance" "master" {
+  count            = var.deploy_db ? 1 : 0
+  name             = var.db_instance_name
+  region           = var.location
+  database_version = "MYSQL_5_7"
 
-  project         = var.project
-  registry_region = var.gcr_region
+  settings {
+    tier = "db-f1-micro"
+  }
+}
+
+resource "google_sql_database" "default" {
+  count = var.deploy_db ? 1 : 0
+
+  name     = var.db_name
+  project  = var.project
+  instance = google_sql_database_instance.master[0].name
+
+  depends_on = [google_sql_database_instance.master]
+}
+
+resource "google_sql_user" "default" {
+  count = var.deploy_db ? 1 : 0
+
+  project  = var.project
+  name     = var.db_username
+  instance = google_sql_database_instance.master[0].name
+
+  host     = var.db_user_host
+  password = var.db_password
+
+  depends_on = [google_sql_database.default]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -100,4 +152,6 @@ module "gcr_registry" {
 
 locals {
   image_name = var.image_name == "" ? "${var.gcr_region}.gcr.io/${var.project}/${var.service_name}" : var.image_name
+  # uncomment the following line to connect to the cloud sql database instance
+  #instance_connection_name = "${var.project}:${var.location}:${google_sql_database_instance.master[0].name}"
 }

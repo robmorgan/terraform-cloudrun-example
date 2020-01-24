@@ -43,14 +43,16 @@ func createExampleWithMysqlTerraformOptions(
 ) *terraform.Options {
 	repoName := strings.ToLower(fmt.Sprintf("sample-docker-app-%s", uniqueID))
 	serviceName := strings.ToLower(fmt.Sprintf("sample-docker-service-%s", uniqueID))
+	instanceName := strings.ToLower(fmt.Sprintf("master-mysql-instance-%s", uniqueID))
 
 	terraformVars := map[string]interface{}{
-		"location":        region,
-		"project":         project,
-		"gcr_region":      lookupMultiRegion(region),
-		"repository_name": repoName,
-		"service_name":    serviceName,
-		"deploy_db":       true,
+		"location":         region,
+		"project":          project,
+		"gcr_region":       lookupMultiRegion(region),
+		"repository_name":  repoName,
+		"service_name":     serviceName,
+		"deploy_db":        true,
+		"db_instance_name": instanceName,
 	}
 
 	terratestOptions := terraform.Options{

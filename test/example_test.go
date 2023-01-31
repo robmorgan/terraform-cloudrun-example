@@ -26,7 +26,7 @@ const GitHubRepoName = "sample-app-docker"
 const GitHubRepoURL = "https://github.com/robmorgan/sample-node-app.git"
 
 // The Git branch to check out and push commits to.
-const GitHubRepoBranch = "master"
+const GitHubRepoBranch = "main"
 
 // The following test ensures the example works as expected. It performs the following test logic:
 //
